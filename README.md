@@ -15,9 +15,13 @@ FIX ME!
 Developer
 =======
 Sebastian Krätzig
+
 Florian Betz
+
 Philip Zeh
+
 Attila Schmidt
+
 Yannik Horn
 
 License
