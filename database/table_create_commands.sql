@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 10. Jul 2014 um 13:55
+-- Erstellungszeit: 10. Jul 2014 um 20:18
 -- Server Version: 5.5.27
 -- PHP-Version: 5.4.7
 
@@ -23,16 +23,28 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `tblcities`
+--
+
+CREATE TABLE IF NOT EXISTS `tblcities` (
+  `CityID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `postalCode` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`CityID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `tblcompanies`
 --
 
-CREATE TABLE IF NOT EXISTS `tblCompanies` (
+CREATE TABLE IF NOT EXISTS `tblcompanies` (
   `companyID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `street` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `houseNumber` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-  `postalCode` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-  `city` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `cityID` int(10) unsigned NOT NULL,
   `landID` int(10) unsigned NOT NULL,
   `salesTaxIdentificationNumber` varchar(12) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`companyID`),
@@ -45,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `tblCompanies` (
 -- Tabellenstruktur für Tabelle `tblcustomercompanylink`
 --
 
-CREATE TABLE IF NOT EXISTS `tblCustomerCompanyLink` (
+CREATE TABLE IF NOT EXISTS `tblcustomercompanylink` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `customerNumber` int(10) unsigned NOT NULL,
   `companyID` int(10) unsigned NOT NULL,
@@ -59,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `tblCustomerCompanyLink` (
 -- Tabellenstruktur für Tabelle `tblcustomers`
 --
 
-CREATE TABLE IF NOT EXISTS `tblCustomers` (
+CREATE TABLE IF NOT EXISTS `tblcustomers` (
   `contactID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `customerNumber` int(10) unsigned NOT NULL,
   `firstName` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -70,6 +82,10 @@ CREATE TABLE IF NOT EXISTS `tblCustomers` (
   `FaxNumber` decimal(32,0) NOT NULL,
   `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `Password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `registrationDate` date NOT NULL,
+  `disabled` tinyint(1) NOT NULL,
+  `disabledDate` date NOT NULL,
+  `terminationDate` date NOT NULL,
   PRIMARY KEY (`contactID`),
   UNIQUE KEY `eMail` (`eMail`),
   UNIQUE KEY `username` (`username`)
@@ -78,10 +94,28 @@ CREATE TABLE IF NOT EXISTS `tblCustomers` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `tblinvoices`
+--
+
+CREATE TABLE IF NOT EXISTS `tblinvoices` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `customerID` int(10) unsigned NOT NULL,
+  `invoiceNumber` decimal(10,0) unsigned NOT NULL,
+  `dateFrom` date NOT NULL,
+  `dateUntil` date NOT NULL,
+  `paid` tinyint(1) NOT NULL DEFAULT '0',
+  `attachement` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `invoiceNumber` (`invoiceNumber`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Contains invoices' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `tbllands`
 --
 
-CREATE TABLE IF NOT EXISTS `tblLands` (
+CREATE TABLE IF NOT EXISTS `tbllands` (
   `landID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `abbreviationISO31662` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
@@ -95,7 +129,7 @@ CREATE TABLE IF NOT EXISTS `tblLands` (
 -- Tabellenstruktur für Tabelle `tblorderitems`
 --
 
-CREATE TABLE IF NOT EXISTS `tblOrderItems` (
+CREATE TABLE IF NOT EXISTS `tblorderitems` (
   `positionNumber` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `orderNumber` int(10) unsigned NOT NULL,
   `productNumber` int(10) unsigned NOT NULL,
@@ -109,9 +143,10 @@ CREATE TABLE IF NOT EXISTS `tblOrderItems` (
 -- Tabellenstruktur für Tabelle `tblorders`
 --
 
-CREATE TABLE IF NOT EXISTS `tblOrders` (
+CREATE TABLE IF NOT EXISTS `tblorders` (
   `orderNumber` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `customerNumber` int(10) unsigned NOT NULL,
+  `orderDate` date NOT NULL,
   PRIMARY KEY (`orderNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
@@ -121,7 +156,7 @@ CREATE TABLE IF NOT EXISTS `tblOrders` (
 -- Tabellenstruktur für Tabelle `tblproducts`
 --
 
-CREATE TABLE IF NOT EXISTS `tblpProducts` (
+CREATE TABLE IF NOT EXISTS `tblproducts` (
   `productNumber` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `description` longtext COLLATE utf8_unicode_ci NOT NULL,
